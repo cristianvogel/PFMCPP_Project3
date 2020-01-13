@@ -518,15 +518,15 @@ std::string PresetLibrary::PresetName::getRandomChars (long seededWith, unsigned
     std::string noisy = "asiodfunoiusfdyvnzxcvuybzxocv";
     unsigned noisyLength = unsigned(noisy.length());
     std::string result = "";
-    std::srand(unsigned(seededWith));
+    std::srand(static_cast<unsigned>(seededWith));
 
     lengthInChars = (lengthInChars > noisyLength) ? noisyLength : lengthInChars;
 
     unsigned int index;
     for ( unsigned int j = 0; j< lengthInChars; ++j)
     {
-        index = (unsigned(std::rand()))%lengthInChars; 
-        char pick = noisy[ size_t (index) ];
+        index = (static_cast<unsigned>(std::rand()))%lengthInChars; 
+        char pick = noisy[ static_cast<size_t>(index) ];
         result += pick;
     }
     return result;
