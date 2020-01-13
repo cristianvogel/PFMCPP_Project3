@@ -130,7 +130,7 @@ int main()
 /*
  example:
  */
- namespace CarWashExample
+namespace CarWashExample
 {
 struct CarWash            //1) a U.D.T. with a random number of member variables
 {
@@ -177,9 +177,9 @@ struct Kitchen
 {
     Kitchen()
     {
-    numberChefs = 1;
-    numberOfAssistants = 3;
-    numberOfStudents = 25;
+        numberChefs = 1;
+        numberOfAssistants = 3;
+        numberOfStudents = 25;
     }
 
     unsigned int numberChefs;
@@ -220,10 +220,7 @@ void Kitchen::startCookingClass (Chef chef, Recipe recipe)
 {
     chef.isTeaching = true;
     recipe.currentStep = 0;
-    if (chef.codeName == recipe.creator.codeName) 
-    {
-        chef.isMasterChef = true;
-    }
+    chef.isMasterChef = (chef.codeName == recipe.creator.codeName);  
 }
 
 int main()
@@ -232,7 +229,6 @@ int main()
     masterChef.printNumberOfStudents();
     return 0;
 }
-
 }
 /*
  2)
@@ -294,7 +290,7 @@ KioskLocator::KList KioskLocator::KList::getClosestKiosks()
 
 void KioskLocator::getClosestKiosk (KList klist) 
 {
-    // set closest kiosk from a KList
+     // set closest kiosk from a KList
     refreshList (klist,3);
     closestKiosk.name = 'A';
     closestKiosk.distance = 0.0f;
@@ -306,9 +302,7 @@ int main()
     KLM.printKioskLocatorName();
     return 0;
 }
-
 }
-
 
 /*
  3)
@@ -319,9 +313,9 @@ struct ADSR
 {
     ADSR() 
     {
-     isRunning = false;
-     timeScale = 'M';
-     duration = 1.0;
+        isRunning = false;
+        timeScale = 'M';
+        duration = 1.0;
     }
 
     bool isRunning;
@@ -381,9 +375,9 @@ struct Form
     { 
         TextField() 
         {
-        x = 80; y = 160; w = 400; h = 90;
-        alpha = 32;
-        fieldID = 'a'; hasCheckBox = true;
+            x = 80; y = 160; w = 400; h = 90;
+            alpha = 32;
+            fieldID = 'a'; hasCheckBox = true;
         }
 
         float x,y,w,h;
@@ -396,9 +390,9 @@ struct Form
     {
         CheckBox()
         {
-        size = 16.0f;
-        icon = '#';
-        isChecked = false;
+            size = 16.0f;
+            icon = '#';
+            isChecked = false;
         }
 
         float size;
@@ -472,10 +466,10 @@ struct PresetLibrary
 {
     PresetLibrary()
     {
-    bank = 'A';
-    presetNumber = 1;
-    hasBeenEdited = false;
-    seed = 0.001f;
+        bank = 'A';
+        presetNumber = 1;
+        hasBeenEdited = false;
+        seed = 0.001f;
     }
 
     char bank;
@@ -491,10 +485,10 @@ struct PresetLibrary
         // gets random seed from time in the constructor
         PresetName()
         {
-        time_t timeSeed;
-        time (&timeSeed);
-        numberOfChars = 8;
-        name = this-> getRandomChars (timeSeed, numberOfChars);
+            time_t timeSeed;
+            time (&timeSeed);
+            numberOfChars = 8;
+            name = this-> getRandomChars (timeSeed, numberOfChars);
         }
 
         std::string name;
@@ -527,12 +521,15 @@ std::string PresetLibrary::PresetName::getRandomChars (long seededWith, unsigned
 
     lengthInChars = (lengthInChars > noisy.length()) ? noisy.length() : lengthInChars;
 
-    unsigned int i;
-    for (unsigned int j = 0; j< lengthInChars; ++j)
+    unsigned int index;
+    for ( unsigned int j = 0; j< lengthInChars; ++j) //FIXME types
     {
-    i = std::rand()%lengthInChars;
-    char pick = noisy[i];
-    result += pick;
+        // when I have learned about casting in C++11
+        // here I will need to safely modify std::rand() with unsigned
+        index = (unsigned) std::rand()%lengthInChars; 
+        // here I will need to safely cast to size_t type
+        char pick = noisy[ (size_t) index ];
+        result += pick;
     }
     return result;
 }
@@ -583,10 +580,10 @@ struct FunkyBufferPlayer
 {
     FunkyBufferPlayer()
     {
-    bufferID = 1;
-    defaultBufferSize = 60 * 5;
-    numberOfBuffers = 4;
-    loopCounter = 0;
+        bufferID = 1;
+        defaultBufferSize = 60 * 5;
+        numberOfBuffers = 4;
+        loopCounter = 0;
     }
 
     int bufferID;
@@ -673,12 +670,10 @@ struct FlyingFaderBank
         void update (std::string id, float friction, float accel, float velocity);
         float getValue (std::string id);
     };
-/*  Initialising structs this way works for the fader bank
-    https://www.learncpp.com/cpp-tutorial/47-structs/
-    I learned that if no initialiser value is passed then the constructor
-    default values are used. Neat! 
-*/
-    Fader fader1 { "kik", false, 0.5f, 0.2f, 0.4f }, fader2 { "snr" }, fader3 { "klp" }; 
+//  Initialising structs from list overrides constructor default values
+    Fader fader1 { "kik", false, 0.55f, 0.2f, 0.4f }, 
+          fader2 { "snr", true, 0.1f, 0.33f, 0.5f }, 
+          fader3 { "klp", false, 0.1f, 0.3f, 0.5f }; 
 
     std::string printFaderPhysics();
     std::string printFaderIDs();
@@ -764,9 +759,9 @@ struct Meter
 {
     Meter()
     {
-    meterID = 1; peakHold = true;
-    colourPallette = 'a';
-    slewRise = 0.1f; slewFall = 0.1f;
+        meterID = 1; peakHold = true;
+        colourPallette = 'a';
+        slewRise = 0.1f; slewFall = 0.1f;
     }
 
     int meterID;
@@ -808,9 +803,6 @@ struct Meter
 };
 
 //Implementation 9
-
-
-
 void Meter::VerticalMeter::updateSegment (int, Meter::VerticalMeter::Segment)
 {
     //update segment graphics style
@@ -835,7 +827,6 @@ int main()
     << "," << vu2.vumeterType2.w <<  "," << vu2.vumeterType2.h << std::endl;
     return 0;
 }
-
 }
 /*
  10)
@@ -846,11 +837,11 @@ struct StepSequencer
 {
     StepSequencer()
     {
-    isPlaying = false;
-    numberOfSteps = 8;
-    tempo = 120;
-    id = 1;
-    pitchClass = stepData.stepPitchClass.pitch; 
+        isPlaying = false;
+        numberOfSteps = 8;
+        tempo = 120;
+        id = 1;
+        pitchClass = stepData.stepPitchClass.pitch; 
     }
 
     bool isPlaying;
@@ -874,7 +865,7 @@ struct StepSequencer
             double frequency;
             char pitch;
             
-            char pitchFromFreq (double );
+            char pitchFromFreq (double);
         };
 
         int currentStage = {1};
@@ -884,15 +875,15 @@ struct StepSequencer
         double duration = 1.0;
     };
 
-    int getCurrentStage (unsigned int id );
-    void stepSequence (unsigned int id, bool isPlaying );
+    int getCurrentStage (unsigned int id);
+    void stepSequence (unsigned int id, bool isPlaying);
     
     StepData stepData;
     StepData getCurrentStepData();
 };
 
 //Implementation 10
-char StepSequencer::StepData::PitchClass::pitchFromFreq (double freq)
+char StepSequencer::StepData::PitchClass::pitchFromFreq (double)
 {
     //here we would actually calculate the pitch class with precision and grace
     char result = 'A';
