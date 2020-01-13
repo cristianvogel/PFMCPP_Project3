@@ -516,19 +516,17 @@ std::string PresetLibrary::PresetName::getRandomChars (long seededWith, unsigned
         ... Project 3 task psuedo app, I just lookup a char at random from a string....
     */
     std::string noisy = "asiodfunoiusfdyvnzxcvuybzxocv";
+    unsigned noisyLength = unsigned(noisy.length());
     std::string result = "";
-    std::srand(seededWith);
+    std::srand(unsigned(seededWith));
 
-    lengthInChars = (lengthInChars > noisy.length()) ? noisy.length() : lengthInChars;
+    lengthInChars = (lengthInChars > noisyLength) ? noisyLength : lengthInChars;
 
     unsigned int index;
-    for ( unsigned int j = 0; j< lengthInChars; ++j) //FIXME types
+    for ( unsigned int j = 0; j< lengthInChars; ++j)
     {
-        // when I have learned about casting in C++11
-        // here I will need to safely modify std::rand() with unsigned
-        index = (unsigned) std::rand()%lengthInChars; 
-        // here I will need to safely cast to size_t type
-        char pick = noisy[ (size_t) index ];
+        index = (unsigned(std::rand()))%lengthInChars; 
+        char pick = noisy[ size_t (index) ];
         result += pick;
     }
     return result;
