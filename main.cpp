@@ -1,173 +1,44 @@
 /*
- Project 3 - Part 3
- video: Chapter 2 - Part 8
- Constructors tasks
+ Project 3 - Part 4 / 5
+ video: Chapter 2 - Part 9
+ Member initialization tasks
 
- On a new branch named part3
+ Create a branch named Part4
+ 
+ 1) initialize some of your member variables either in-class or in the Constructor member initializer list.
 
- 1) Add a constructor for each User-Defined-Type.
+ 2) make some of your member functions use those initialized member variables via std::cout statements.
  
- 2) Instantiate a few of your user-defined types in the main function at the bottom of that file, and call some of those member functions.
- 
- 3) make them print out something interesting via std::cout
- 
- After you finish defining each type/function:
- click the [run] button.  Clear up any errors or warnings as best you can.
+ 3) click the [run] button.  Clear up any errors or warnings as best you can.
  
  Commit your changes by clicking on the Source Control panel on the left, entering a message, and click [Commit and push].
  
+ Send me the the link to your repl.it in a DM on Slack
+
  Wait for my code review.
- 
- example:
  */
 
 #include <iostream>
-#include <ctime>  // for random seeding
-
-namespace Example 
-{
-struct UDT  // my user defined type
+namespace Example {
+struct UDT  
 {
     int a; //a member variable
-    UDT() { a = 0; }             //3) the constructor
-    void printThing()            //1) the member function
+    float b { 2.f }; //3) in-class initialization
+    UDT() : a(0) { } //3) 'constructor-initializer-list' member variable initialization
+    void printThing()  //the member function
     {
-        std::cout << "UDT::printThing() " << a << std::endl;  //5) printing out something interesting
+        std::cout << "UDT::printThing() a:" << a << " b: " << b << std::endl;  //4) printing out something interesting
     }
 };
 
 int main()
 {
-    UDT foo;              //4) instantiating a UDT in main()
-    foo.printThing();     //4) calling a member function of the instance that was instantiated.
-    
+    UDT foo; //instantiating a Foo in main()
+    foo.printThing(); //calling a member function of the instance that was instantiated.
     return 0;
 }
 }
 
-namespace PersonTask
-{
-struct Person 
-{
-    Person()  //constructor for Person UDT 
-    { 
-        age = 42; height = 178; 
-        hairLength = 2.3f; GPA = 20;
-        SATScore = 0; distanceTravelled = 0.0f;
-    }
-
-    int age;
-    int height;
-    float hairLength;
-    float GPA;
-    unsigned int SATScore;
-    float distanceTravelled;
-    
-    struct Foot
-    {
-        Foot(){ stepSize = 0.5f; } // constructor for Foot UDT inside Person UDT
-
-        float stepSize;
-
-        float getStepSize()
-        {
-            //get stepSize
-            std::cout << "Person::Foot::getStepSize() " << stepSize << std::endl; 
-            return stepSize;
-        }
-
-        void stepForward()
-        {
-            //take a step forward
-        }
-    };
-
-    Foot leftFoot;
-    Foot rightFoot;
-
-    void run (int, bool);
-    
-    void printAge()            //1) the member function for this task
-    {
-        std::cout << "Person::printAge() " << age << std::endl;   
-    }     
-};
-
-
-
-void Person::run (int, bool startWithLeftFoot)
-{
-    if (startWithLeftFoot == true) 
-    {
-        leftFoot.stepForward();
-        rightFoot.stepForward();
-    }
-    else
-    {
-        rightFoot.stepForward();
-        leftFoot.stepForward();
-    };
-    distanceTravelled += leftFoot.getStepSize() + rightFoot.getStepSize();
-}
-
-int main() 
-{
-    Person pavel;             
-    pavel.printAge();     
-    pavel.leftFoot.getStepSize();
-    return 0;
-}
-
-}
- /*
- 2) provide implementations for the member functions you declared in your 10 user-defined types from the previous video outside of your UDT definitions.
- 3) be sure to write the correct full qualified name for the nested type's member functions.
- 4) After you finish defining each type/function, click the [run] button.  Clear up any errors or warnings as best you can.
- Commit your changes by clicking on the Source Control panel on the left, entering a message, and click [Commit and push].
- Wait for my code review.
- */
-
-/*
- example:
- */
-namespace CarWashExample
-{
-struct CarWash            //1) a U.D.T. with a random number of member variables
-{
-    CarWash()
-    {
-        numSponges = 3; 
-        amountOfSoapUsedPerCar = 2.6;
-        numCarsProcessed = 0;
-    }
-    int numSponges;
-    double amountOfSoapUsedPerCar; //2) relevant data types
-    unsigned int numCarsProcessed;
-    
-    struct Car                             //4) nested class
-    {
-        bool isAPickupTruck = false;
-        float gasMileage = 26.2f;        //2) relevant data types
-    };
-    
-    void washAndWaxCar( Car car );         //3) member function with a user-defined type as the parameter.  The user-defined type parameter happens to be the nested class.
-    
-    Car myCar;  //5) a member variable whose type is a UDT.
-
-    void printNumSponges() // Member Function for Constructor task
-    {
-         std::cout << "CarWash:: sponge count -> " << numSponges << std::endl;   
-    }
-        
-};
-
-int main() 
-{
-    CarWash downTown;
-    downTown.printNumSponges();
-    return 0;
-}
-}
 /*
  1)
  */
@@ -917,8 +788,6 @@ int main()
 int main()
 {
 	Example::main();
-    PersonTask::main();
-    CarWashExample::main();
     KitchenExample::main();
     KioskLocatorTask::main();
     ADSRTask::main();
