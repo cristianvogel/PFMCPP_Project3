@@ -22,6 +22,8 @@
  */
 
 #include <iostream>
+#include <ctime>  // for random seeding
+
 namespace Example 
 {
 struct UDT  // my user defined type
@@ -43,22 +45,35 @@ int main()
 }
 }
 
-
+namespace PersonTask
+{
 struct Person 
 {
+    Person()  //constructor for Person UDT 
+    { 
+        age = 42; height = 178; 
+        hairLength = 2.3f; GPA = 20;
+        SATScore = 0; distanceTravelled = 0.0f;
+    }
+
     int age;
     int height;
-    float hairlength;
+    float hairLength;
     float GPA;
     unsigned int SATScore;
     float distanceTravelled;
-
+    
     struct Foot
     {
-        float stepSize()
+        Foot(){ stepSize = 0.5f; } // constructor for Foot UDT inside Person UDT
+
+        float stepSize;
+
+        float getStepSize()
         {
             //get stepSize
-            return {};
+            std::cout << "Person::Foot::getStepSize() " << stepSize << std::endl; 
+            return stepSize;
         }
 
         void stepForward()
@@ -71,7 +86,14 @@ struct Person
     Foot rightFoot;
 
     void run (int, bool);
+    
+    void printAge()            //1) the member function for this task
+    {
+        std::cout << "Person::printAge() " << age << std::endl;   
+    }     
 };
+
+
 
 void Person::run (int, bool startWithLeftFoot)
 {
@@ -85,9 +107,18 @@ void Person::run (int, bool startWithLeftFoot)
         rightFoot.stepForward();
         leftFoot.stepForward();
     };
-    distanceTravelled += leftFoot.stepSize() + rightFoot.stepSize();
+    distanceTravelled += leftFoot.getStepSize() + rightFoot.getStepSize();
 }
 
+int main() 
+{
+    Person pavel;             
+    pavel.printAge();     
+    pavel.leftFoot.getStepSize();
+    return 0;
+}
+
+}
  /*
  2) provide implementations for the member functions you declared in your 10 user-defined types from the previous video outside of your UDT definitions.
  3) be sure to write the correct full qualified name for the nested type's member functions.
@@ -99,11 +130,19 @@ void Person::run (int, bool startWithLeftFoot)
 /*
  example:
  */
+namespace CarWashExample
+{
 struct CarWash            //1) a U.D.T. with a random number of member variables
 {
-    int numSponges = 3;
-    double amountOfSoapUsedPerCar = 2.6; //2) relevant data types
-    unsigned int numCarsProcessed = 0;
+    CarWash()
+    {
+        numSponges = 3; 
+        amountOfSoapUsedPerCar = 2.6;
+        numCarsProcessed = 0;
+    }
+    int numSponges;
+    double amountOfSoapUsedPerCar; //2) relevant data types
+    unsigned int numCarsProcessed;
     
     struct Car                             //4) nested class
     {
@@ -114,16 +153,38 @@ struct CarWash            //1) a U.D.T. with a random number of member variables
     void washAndWaxCar( Car car );         //3) member function with a user-defined type as the parameter.  The user-defined type parameter happens to be the nested class.
     
     Car myCar;  //5) a member variable whose type is a UDT.
+
+    void printNumSponges() // Member Function for Constructor task
+    {
+         std::cout << "CarWash:: sponge count -> " << numSponges << std::endl;   
+    }
+        
 };
 
+int main() 
+{
+    CarWash downTown;
+    downTown.printNumSponges();
+    return 0;
+}
+}
 /*
  1)
  */
+namespace KitchenExample
+{
 struct Kitchen
 {
-    unsigned int numberChefs = 1;
-    unsigned int numberOfAssistants = 3;
-    unsigned int numberOfStudents = 25;
+    Kitchen()
+    {
+        numberChefs = 1;
+        numberOfAssistants = 3;
+        numberOfStudents = 25;
+    }
+
+    unsigned int numberChefs;
+    unsigned int numberOfAssistants;
+    unsigned int numberOfStudents;
 
     struct Chef 
     {
@@ -147,6 +208,11 @@ struct Kitchen
     Chef masterChef;
 
     void startCookingClass (Chef c, Recipe r);
+
+    void printNumberOfStudents() 
+    {
+        std::cout << "Kitchen::Number of Students -> " << numberOfStudents << std::endl;
+    }
 };
 
 //Implementation 1
@@ -154,21 +220,33 @@ void Kitchen::startCookingClass (Chef chef, Recipe recipe)
 {
     chef.isTeaching = true;
     recipe.currentStep = 0;
-    if (chef.codeName == recipe.creator.codeName) 
-    {
-        chef.isMasterChef = true;
-    }
+    chef.isMasterChef = (chef.codeName == recipe.creator.codeName);  
 }
 
+int main()
+{
+    Kitchen masterChef;
+    masterChef.printNumberOfStudents();
+    return 0;
+}
+}
 /*
  2)
  */
+namespace KioskLocatorTask 
+{ 
 struct KioskLocator
 {
-    bool isOpen = true;
-    float distance = 0.0f;
-    int starRating = 5;
-    char name = 'k';
+    KioskLocator()
+    {
+        isOpen = true; distance = 0.0f;
+        starRating = 5; name = 'k';
+    }
+
+    bool isOpen;
+    float distance;
+    int starRating;
+    char name;
     
     struct Kiosk 
     {
@@ -189,6 +267,11 @@ struct KioskLocator
 
     void refreshList (KList k, int initSize);
     void getClosestKiosk (KList klist);
+
+    void printKioskLocatorName()
+    {
+        std::cout << "KioskLocator::printKioskLocatorName is -> " << name << std::endl;
+    }
 };
 
 //Implementation 2
@@ -207,20 +290,37 @@ KioskLocator::KList KioskLocator::KList::getClosestKiosks()
 
 void KioskLocator::getClosestKiosk (KList klist) 
 {
-    // set closest kiosk from a KList
+     // set closest kiosk from a KList
     refreshList (klist,3);
     closestKiosk.name = 'A';
     closestKiosk.distance = 0.0f;
 }
 
+int main()
+{
+    KioskLocator KLM;
+    KLM.printKioskLocatorName();
+    return 0;
+}
+}
+
 /*
  3)
  */
+namespace ADSRTask
+{
 struct ADSR 
 {
-    bool isRunning = false;
-    char timeScale = 'M';
-    double duration = 1.0;
+    ADSR() 
+    {
+        isRunning = false;
+        timeScale = 'M';
+        duration = 1.0;
+    }
+
+    bool isRunning;
+    char timeScale;
+    double duration;
     
     struct Stage 
     { 
@@ -230,6 +330,11 @@ struct ADSR
 
     Stage currentStage;
     Stage getCurrentStage();
+
+    void printDuration()
+    {
+         std::cout << "ADSR::duration is -> " << duration << std::endl;
+    }
 };
 
 //Implementation 3
@@ -246,28 +351,53 @@ ADSR::Stage ADSR::getCurrentStage()
     return {};
 }
 
+int main() 
+{
+    ADSR env;
+    env.printDuration();
+    return 0;
+}
+
+}
+
 /*
  4)
  */
+ namespace FormTask
+ {
 struct Form 
 {
-    bool isVisible = true;
-    char formID = 'f';
-    int fields = 4;
+    bool isVisible;
+    char formID;
+    int fields;
     
     struct TextField 
     { 
+        TextField() 
+        {
+            x = 80; y = 160; w = 400; h = 90;
+            alpha = 32;
+            fieldID = 'a'; hasCheckBox = true;
+        }
+
         float x,y,w,h;
-        int alpha = 32;
-        char fieldID = 'a';
-        bool hasCheckBox = true;
+        int alpha;
+        char fieldID;
+        bool hasCheckBox;
     };
 
     struct CheckBox
     {
-        float size = 16.0f;
-        char icon = '#';
-        bool isChecked = false;
+        CheckBox()
+        {
+            size = 16.0f;
+            icon = '#';
+            isChecked = false;
+        }
+
+        float size;
+        char icon;
+        bool isChecked;
 
         void animateCheckBox (char fieldID, CheckBox c);
     };
@@ -275,9 +405,21 @@ struct Form
     CheckBox checkBox;
     TextField fullName;
 
+    Form ()
+    {
+        isVisible = true;
+        formID = 'f';
+        fields = 4;
+        fullName = TextField();
+    }
+
     bool mouseOver (TextField fullName);
     bool formIsVisible (char formID);
     void clearAllCheckBoxes (Form f);
+    void print_IDs()
+    {
+         std::cout << "Form::ids are FieldID ->  " << fullName.fieldID << " FormID ->  " << formID << " CheckBox ID ->  " << checkBox.icon <<std::endl;
+    }
 };
 
 //Implementation 4
@@ -295,6 +437,7 @@ bool Form::formIsVisible (char)
     return {};
 }
 
+
 void Form::CheckBox::animateCheckBox (char , CheckBox)
 {
     /*
@@ -304,38 +447,98 @@ void Form::CheckBox::animateCheckBox (char , CheckBox)
 }
 
 
+int main()
+{
+    Form submit;
+    submit.print_IDs();
+    return 0;
+}
+
+}
+
 /*
  5)
  */
+ 
+namespace PresetLibraryTask
+{
 struct PresetLibrary 
 {
-    char bank = 'A';
-    int presetNumber = 1;
+    PresetLibrary()
+    {
+        bank = 'A';
+        presetNumber = 1;
+        hasBeenEdited = false;
+        seed = 0.001f;
+    }
+
+    char bank;
+    int presetNumber;
     char presetName;
-    bool hasBeenEdited = false;
-    float seed = 0.001f;
+    bool hasBeenEdited;
+    float seed;
 
     struct PresetName 
-    {
-        char c;
-        int numberOfChars;
-        
-        struct RandomName 
+    {   
+        // my first pointer! 
+        // learned from cplusplus.com
+        // gets random seed from time in the constructor
+        PresetName()
         {
-            int keyX, keyY;
-            
-            char getCharAt (int keyX, int keyY);
-        };
+            time_t timeSeed;
+            time (&timeSeed);
+            numberOfChars = 8;
+            name = this-> getRandomChars (timeSeed, numberOfChars);
+        }
 
-        RandomName rn;
+        std::string name;
+        unsigned int numberOfChars;
+
+        std::string getRandomChars (long, unsigned int);
     };
 
+    PresetName presetNameObject;
+
     bool updatePresets();
-    PresetName generateRandomName (char bank, int presetNumber, float seed);
     PresetLibrary dumpBank (char bank);
+    /* DEPRECATED
+    PresetName generateRandomName (char bank, int presetNumber, float seed);
+    */
+
+    std::string getPresetName();
+    
 };
 
 //Implementation 5
+std::string PresetLibrary::PresetName::getRandomChars (long seededWith, unsigned int lengthInChars) 
+{
+    /*
+        ... Project 3 task psuedo app, I just lookup a char at random from a string....
+    */
+    std::string noisy = "asiodfunoiusfdyvnzxcvuybzxocv";
+    unsigned noisyLength = unsigned(noisy.length());
+    std::string result = "";
+    std::srand(static_cast<unsigned>(seededWith));
+
+    lengthInChars = (lengthInChars > noisyLength) ? noisyLength : lengthInChars;
+
+    unsigned int index;
+    for ( unsigned int j = 0; j< lengthInChars; ++j)
+    {
+        index = (static_cast<unsigned>(std::rand()))%lengthInChars; 
+        char pick = noisy[ static_cast<size_t>(index) ];
+        result += pick;
+    }
+    return result;
+}
+
+std::string PresetLibrary::getPresetName()
+{
+    PresetLibrary preset;
+   // std::cout << "Debug: " << preset.presetNameObject.name << std::endl;
+    return preset.presetNameObject.name;
+}
+
 
 bool PresetLibrary::updatePresets() 
 {
@@ -343,11 +546,13 @@ bool PresetLibrary::updatePresets()
     return {};
 }
 
+/* DEPRECATED
 PresetLibrary::PresetName PresetLibrary::generateRandomName (char, int, float) 
 {
-    //come up with a random name for a presetNumber in a bank
+    //come up with a random name STRING for a presetNumber in a bank
     return {};
 }
+*/
 
 PresetLibrary PresetLibrary::dumpBank (char)
 {
@@ -356,24 +561,33 @@ PresetLibrary PresetLibrary::dumpBank (char)
     return {};
 }
 
-char PresetLibrary::PresetName::RandomName::getCharAt (int, int)
+int main() 
 {
-    /*
-        get some random icon or char/string as preset name
-        from a 2D Collection somewhere
-    */
-    return {};
+    PresetLibrary pl; 
+    std::cout << "PresetLibrary::random name is ->  " << pl.getPresetName() << std::endl;
+    return 0;
 }
 
+}
 /*
  6)
  */
+ namespace FunkyBufferPlayerTask
+{
 struct FunkyBufferPlayer 
 {
-    int bufferID = 1;
-    double defaultBufferSize = 60 * 5;
-    int numberOfBuffers = 4;
-    int loopCounter = 0;
+    FunkyBufferPlayer()
+    {
+        bufferID = 1;
+        defaultBufferSize = 60 * 5;
+        numberOfBuffers = 4;
+        loopCounter = 0;
+    }
+
+    int bufferID;
+    double defaultBufferSize;
+    int numberOfBuffers;
+    int loopCounter;
 
     struct Buffer 
     {
@@ -392,6 +606,11 @@ struct FunkyBufferPlayer
         bool clearBuffer (int bufferID);
         bool copyToSecondaryBuffer (SecondaryBuffer bufferID);
     };
+
+    double printDefaultBufferSize()
+    {
+        return (this-> defaultBufferSize);
+    }
 };
 
 //Implementation 6
@@ -421,54 +640,90 @@ void FunkyBufferPlayer::Buffer::SecondaryBuffer::reverse (int)
     //Get Funky
 }
 
+int main() 
+{
+    FunkyBufferPlayer fbp;
+    std::cout << "FunkyBufferPlayer::default size ->  "<< fbp.printDefaultBufferSize() << std::endl;
+    return 0;
+}
+
+}
 
 /*
  7)
  */
+namespace FaderBankTask
+{
 struct FlyingFaderBank
 {
-    int numberOfFaders = 3;
+ 
+    int numberOfFaders = {3};
 
-    struct Fader 
+    struct Fader
     {
-        int id;
-        bool physics = true;
-        float friction, accel, velocity = 0.5f;
+        std::string id;
+        bool physics = {true};
+        float friction, accel, velocity = {0.5f};
 
-        void update (int id, float friction, float accel, float velocity);
-        float getValue (int id);
+        void update (std::string id, float friction, float accel, float velocity);
+        float getValue (std::string id);
     };
+//  Initialising structs from list overrides constructor default values
+    Fader fader1 { "kik", false, 0.55f, 0.2f, 0.4f }, 
+          fader2 { "snr", true, 0.1f, 0.33f, 0.5f }, 
+          fader3 { "klp", false, 0.1f, 0.3f, 0.5f }; 
 
-    Fader fader1, fader2, fader3;
-
+    std::string printFaderPhysics();
+    std::string printFaderIDs();
     void updateFaders (int numberOfFaders);
 };
 
 //Implementation 7
+std::string FlyingFaderBank::printFaderPhysics()
+{
+    std::string result = "";
+    result += (fader1.physics) ? fader1.id+" true " : fader1.id+" false ";
+    result += (fader2.physics) ? fader2.id+" true " : fader2.id+" false "; 
+    result += (fader3.physics) ? fader3.id+" true " : fader3.id+" false ";   
+    return result;
+}
+
 void FlyingFaderBank::updateFaders (int)
 {
     //get status and values of a number of faders
 }
 
-void FlyingFaderBank::Fader::update (int, float, float, float)
+void FlyingFaderBank::Fader::update (std::string, float, float, float)
 {
     //update physics animation of a fader
 }
 
-float FlyingFaderBank::Fader::getValue (int)
+float FlyingFaderBank::Fader::getValue (std::string)
 {
     //return some value from fader data
     return {};
 }
 
+int main()
+{
+    FlyingFaderBank ffb;
+    std::cout << "Faderbank ID & physics -> " << ffb.printFaderPhysics() << std::endl ;
+    return 0;
+}
+}
 /*
  8)
  */
+
+namespace ScaleGeneratorTask
+{
 struct ScaleGenerator
 {
-    char scaleName = 'a';
-    int octaves = 8;
-    double stepSize = 1.618;
+    ScaleGenerator() {scaleName = 'a'; octaves = 8; stepSize = 1.618;}
+
+    char scaleName;
+    int octaves;
+    double stepSize;
     
     struct Scale 
     {
@@ -485,24 +740,52 @@ ScaleGenerator::Scale ScaleGenerator::Scale::generateScaleForOctaves (int, doubl
     return {};
 }
 
+int main() 
+{
+    ScaleGenerator scale;
+    std::cout << "Scale stepsize -> " << scale.stepSize << std::endl;
+    return 0;
+}
+}
+
 /*
  9)
  */
+namespace MetersTask
+{ 
 struct Meter
 {
-    int meterID = 1;
-    bool peakHold = true;
-    char colourPallette = 'a';
-    float slewRise, slewFall = 0.1f;
+    Meter()
+    {
+        meterID = 1; peakHold = true;
+        colourPallette = 'a';
+        slewRise = 0.1f; slewFall = 0.1f;
+    }
+
+    int meterID;
+    bool peakHold;
+    char colourPallette;
+    float slewRise, slewFall;
 
     struct VerticalMeter 
     {   
         int w,h,x,y;
-        float scaleFactor = 0.5f;
-        int numberOfSegments = 32;
+        float scaleFactor = {0.5f};
+        int numberOfSegments = {32};
 
         struct Segment
         {
+            Segment()
+            {
+                segmentIndex = 0; opacity = 0.5f; activeStatus = true;
+            }
+
+            ~Segment()
+            {
+                segmentIndex = -1; opacity = 0.0f; activeStatus = false;
+                this->destroy();
+            }
+
             int segmentIndex;
             float opacity;
             bool activeStatus;
@@ -512,6 +795,9 @@ struct Meter
         };
         void updateSegment (int meterID, Segment s);
     };
+
+    VerticalMeter vumeterType1 { 64, 16, 50, 10};   
+    VerticalMeter vumeterType2 { 16, 64, 50, 50}; 
 };
 
 //Implementation 9
@@ -527,42 +813,81 @@ void Meter::VerticalMeter::Segment::draw (int)
 
 void Meter::VerticalMeter::Segment::destroy()
 {
-    //remove an instance of a Segment UDT from memory
+    //executes when removing an instance of a Segment UDT from memory 
 }
 
+int main() 
+{
+    Meter vu1, vu2;
+    std::cout << "VuMeter1 x y w h ->  " << vu1.vumeterType1.x << "," << vu1.vumeterType1.y
+    << "," << vu1.vumeterType1.w <<  "," << vu1.vumeterType1.h << std::endl;
+    std::cout << "VuMeter2 x y w h ->  " << vu2.vumeterType2.x << "," << vu1.vumeterType2.y
+    << "," << vu2.vumeterType2.w <<  "," << vu2.vumeterType2.h << std::endl;
+    return 0;
+}
+}
 /*
  10)
  */
+namespace SequencerTask
+{ 
 struct StepSequencer
 {
-    bool isPlaying = true;
-    int numberOfSteps = 8;
-    double tempo = 120;
-    unsigned int id = 1;
-	
+    StepSequencer()
+    {
+        isPlaying = false;
+        numberOfSteps = 8;
+        tempo = 120;
+        id = 1;
+        pitchClass = stepData.stepPitchClass.pitch; 
+    }
+
+    bool isPlaying;
+    int numberOfSteps;
+    double tempo;
+    unsigned int id;
+    char pitchClass; 
+    int currentStage;
+
     struct StepData
     {
         struct PitchClass 
         {
-            double frequency;
-            double pitch;
+            PitchClass()
+            {
+                frequency = 440;
+               // pitch = pitchFromFreq (frequency);
+               pitch = 'A';
+            }
 
-            double calculatePitchFromFreq (double frequency );
+            double frequency;
+            char pitch;
+            
+            char pitchFromFreq (double);
         };
 
-        PitchClass p;
+        int currentStage = {1};
+
+        PitchClass stepPitchClass;
         bool gateStatus = true;       
         double duration = 1.0;
     };
 
-    int getCurrentStage (unsigned int id );
-    void stepSequence (unsigned int id, bool isPlaying );
+    int getCurrentStage (unsigned int id);
+    void stepSequence (unsigned int id, bool isPlaying);
     
     StepData stepData;
     StepData getCurrentStepData();
 };
 
 //Implementation 10
+char StepSequencer::StepData::PitchClass::pitchFromFreq (double)
+{
+    //here we would actually calculate the pitch class with precision and grace
+    char result = 'A';
+    return result;
+}
+
 StepSequencer::StepData StepSequencer::getCurrentStepData() 
 {
     // get all current StepData return in a StepData UDT 
@@ -578,11 +903,32 @@ int StepSequencer::getCurrentStage(unsigned int)
 {
     //get stage number of current row with an ID
     return {};
-} 
+}
+
+int main()
+{
+    StepSequencer s1;
+    std::cout << "Sequencer:: Pitch Class -> " << s1.pitchClass << std::endl;
+    return 0;
+}
+}
 
 #include <iostream>
 int main()
 {
 	Example::main();
+    PersonTask::main();
+    CarWashExample::main();
+    KitchenExample::main();
+    KioskLocatorTask::main();
+    ADSRTask::main();
+    FormTask::main();
+    PresetLibraryTask::main();
+    FunkyBufferPlayerTask::main();
+    FaderBankTask::main();
+    ScaleGeneratorTask::main();
+    MetersTask::main();
+    SequencerTask::main();
+
     std::cout << "good to go!" << std::endl;
 }
