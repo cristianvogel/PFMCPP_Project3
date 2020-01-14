@@ -77,8 +77,9 @@ struct Kitchen
 
     Kitchen();
     
-    void startCookingClass (Chef& , Recipe);
-    void printMasterChefStatus ( Chef& );
+    void setMasterChef();
+    void startCookingClass (Chef , Recipe);
+    void printMasterChefStatus ( Chef );
 };
 
 Kitchen::Kitchen() : numberChefs(1), numberOfAssistants(3), numberOfStudents(25) {}
@@ -93,15 +94,25 @@ Kitchen::Chef::Chef() :
 Kitchen::Recipe::Recipe() : completed (false), currentStep (0), recipeID ('A'), creator ('C') {}
 
 //Implementation 1
-void Kitchen::startCookingClass (Chef& aChef, Recipe recipe)
+
+void Kitchen::setMasterChef() 
+{
+    //sets masterchef status of aChef reference
+    bool isMC = (this->chef.codeName == chef.currentRecipe.creator);
+    this->chef.isMasterChef = isMC;
+}
+
+void Kitchen::startCookingClass (Chef aChef, Recipe recipe)
 {
     aChef.isTeaching = true;
     recipe.currentStep += 1;
-    aChef.isMasterChef = (aChef.codeName == recipe.creator); //sets masterchef status of aChef reference
+
+    setMasterChef();
+
     std::cout << "Kitchen::Cooking class started." << std::endl;
 }
 
-void Kitchen::printMasterChefStatus (Chef& aChef) 
+void Kitchen::printMasterChefStatus (Chef aChef) 
 {
     std::cout << "Kitchen::Chef Name? -> " << aChef.codeName << std::endl;
     std::cout << "Kitchen::Recipe Created by? -> " << aChef.currentRecipe.creator << std::endl;
