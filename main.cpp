@@ -117,7 +117,7 @@ void Kitchen::printMasterChefStatus (Chef aChef)
     std::cout << "Kitchen::Chef Name? -> " << aChef.codeName << std::endl;
     std::cout << "Kitchen::Recipe Created by? -> " << aChef.currentRecipe.creator << std::endl;
     std::cout << "Kitchen::Master Chef? -> " << ((aChef.isMasterChef) ? "yes" : "no") << std::endl 
-    << std::endl;
+    << std::endl; //Good use of ternary expression!
 }
 
 int main()
@@ -242,7 +242,7 @@ struct ADSR
     }
     void printDuration()
     {
-         std::cout << "ADSR::duration is -> " << duration << std::endl;
+        std::cout << "ADSR::duration is -> " << duration << std::endl;
     }
 
     ADSR();
@@ -388,7 +388,7 @@ struct PresetLibrary
         PresetName()
         {
             time_t timeSeed;
-            time (&timeSeed);
+            time (&timeSeed); //Where is 'time' defined?  is it a std:: function or type?
             numberOfChars = {8};
             name = this-> getRandomChars (timeSeed, numberOfChars);
         }
@@ -437,7 +437,7 @@ std::string PresetLibrary::PresetName::getRandomChars (long seededWith, unsigned
     unsigned int index;
     for ( unsigned int j = 0; j< lengthInChars; ++j)
     {
-        index = (static_cast<unsigned>(std::rand()))%lengthInChars; 
+        index = (static_cast<unsigned>(std::rand())) % lengthInChars; 
         char pick = noisy[ static_cast<size_t>(index) ];
         result += pick;
     }
