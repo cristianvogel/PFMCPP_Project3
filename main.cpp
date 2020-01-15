@@ -124,8 +124,10 @@ int main()
 {
     Kitchen zanzibars;
 
+    std::cout << "Memory used by Kitchen -> " << sizeof(Kitchen) << " bytes" << std::endl;
     zanzibars.startCookingClass ( zanzibars.chef, zanzibars.chef.currentRecipe);
     zanzibars.printMasterChefStatus( zanzibars.chef );
+
     return 0;
 }
 }
@@ -203,6 +205,7 @@ void KioskLocator::getClosestKiosk (KList klist)
 int main()
 {
     KioskLocator KLM;
+    std::cout << "Memory used by KioskLocator -> " << sizeof(KioskLocator) << " bytes" << std::endl;
     KLM.printKioskLocatorName();
     return 0;
 }
@@ -268,6 +271,7 @@ ADSR::Stage ADSR::getCurrentStage()
 int main() 
 {
     ADSR env;
+    std::cout << "Memory used by ADSR -> " << sizeof(ADSR) << " bytes" << std::endl;
     env.printDuration();
     env.printStageDur( env.currentStage );
     return 0;
@@ -367,6 +371,7 @@ void Form::CheckBox::animateCheckBox (std::string , CheckBox)
 int main()
 {
     Form submit;
+    std::cout << "Memory used by Form -> " << sizeof(Form) << " bytes" << std::endl;
     submit.print_IDs();
     return 0;
 }
@@ -460,6 +465,7 @@ PresetLibrary PresetLibrary::dumpBank (char)
 int main() 
 {
     PresetLibrary pl; 
+    std::cout << "Memory used by PresetLibrary -> " << sizeof(PresetLibrary) << " bytes" << std::endl;
     std::cout << "PresetLibrary:: random name is ->  " << pl.getPresetName() << 
     " from seed -> " << pl.seed << std::endl
     << std::endl;
@@ -555,6 +561,7 @@ void FunkyBufferPlayer::Buffer::SecondaryBuffer::reverse (int)
 int main() 
 {
     FunkyBufferPlayer fbp;
+    std::cout << "Memory used by FunkyBufferPlayer -> " << sizeof(FunkyBufferPlayer) << " bytes" << std::endl;
     std::cout << "FunkyBufferPlayer:: size of buffer "<< fbp.mainBuffer.bufferID  << " is " << fbp.mainBuffer.sizeInSamples  << std::endl << std::endl;
     return 0;
 }
@@ -619,7 +626,9 @@ float FlyingFaderBank::Fader::getValue (std::string)
 int main()
 {
     FlyingFaderBank ffb;
-    std::cout << "Faderbank ID & physics -> " << ffb.printFaderPhysics() << std::endl ;
+    std::cout << "Memory used by FlyingFaderBank -> " << sizeof(FlyingFaderBank) << " bytes" << std::endl;
+    std::cout << "Faderbank ID & physics -> " << ffb.printFaderPhysics() << std::endl 
+    << std::endl;
     return 0;
 }
 }
@@ -656,7 +665,9 @@ ScaleGenerator::Scale ScaleGenerator::Scale::generateScaleForOctaves (int, doubl
 int main() 
 {
     ScaleGenerator scale;
-    std::cout << "Scale stepsize -> " << scale.stepSize << std::endl;
+    std::cout << "Memory used by ScaleGenerator -> " << sizeof(ScaleGenerator) << " bytes" << std::endl;
+    std::cout << "Scale stepsize -> " << scale.stepSize << std::endl
+    << std::endl;
     return 0;
 }
 }
@@ -735,10 +746,13 @@ void Meter::VerticalMeter::Segment::destroy()
 int main() 
 {
     Meter vu1, vu2;
+
+    std::cout << "Memory used by Meter -> " << sizeof(Meter) << " bytes" << std::endl;
     std::cout << "VuMeter1 x y w h ->  " << vu1.vumeterType1.x << "," << vu1.vumeterType1.y
     << "," << vu1.vumeterType1.w <<  "," << vu1.vumeterType1.h << std::endl;
     std::cout << "VuMeter2 x y w h ->  " << vu2.vumeterType2.x << "," << vu1.vumeterType2.y
-    << "," << vu2.vumeterType2.w <<  "," << vu2.vumeterType2.h << std::endl;
+    << "," << vu2.vumeterType2.w <<  "," << vu2.vumeterType2.h << std::endl
+    << std::endl;
     return 0;
 }
 }
@@ -835,6 +849,8 @@ int StepSequencer::getCurrentStage(unsigned int)
 int main()
 {
     StepSequencer s1;
+
+    std::cout << "Memory used by StepSequencer -> " << sizeof(StepSequencer) << " bytes" << std::endl;
     std::cout << "Sequencer:: Pitch Class -> " << s1.pitchClass << std::endl;
     return 0;
 }
