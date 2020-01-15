@@ -19,6 +19,7 @@
  */
 
 #include <iostream>
+#include <ctime> // for time() function
 
 namespace Example {
 struct UDT  
@@ -392,8 +393,8 @@ struct PresetLibrary
         // gets random seed from time in the constructor
         PresetName()
         {
-            time_t timeSeed;
-            time (&timeSeed); //Where is 'time' defined?  is it a std:: function or type?
+            std::time_t timeSeed;
+            std::time (&timeSeed); 
             numberOfChars = {8};
             name = this-> getRandomChars (timeSeed, numberOfChars);
         }
