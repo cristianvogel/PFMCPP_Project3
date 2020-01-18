@@ -1119,11 +1119,22 @@ int main()
     << "Sequencer:: Pitch Class -> " << s1.pitchClass << "\n"
     << "Starting sequencer -> \n";
     s1.isPlaying = true;
+    std::srand(static_cast<unsigned int>(std::time(nullptr))); //initialise biased PRNG
+    int randomInt = 0;
+    std::string playSign = "";
+
     for (int i=48; i>0; --i) 
     {
-        std::cout << " \u25BB " << s1.stepForward();
+        playSign = " \u21E8 ";
+        randomInt = static_cast<int>(std::rand()%10);
+        // 50% chance of flipping direction...
+        if (randomInt < 5) 
+        {
+            s1.isBackwards = !s1.isBackwards;
+            playSign = " \u21E6 ";
+        }
+        std::cout << playSign << s1.stepForward();
     }
-
     return 0;
 }
 }
