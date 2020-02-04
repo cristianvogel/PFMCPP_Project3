@@ -35,6 +35,8 @@ Create a branch named Part5
  */
 
 #include <iostream>
+#include <random>
+
 namespace Example {
 struct Bar 
 { 
@@ -103,6 +105,13 @@ struct Kitchen
         bool isMasterChef;
         char codeName;
         Recipe currentRecipe; 
+        int minutesCooking {0};
+        int timeAllowed {15};
+
+        void setMinutesCooking( int mins )
+        {
+            minutesCooking = mins;
+        }
 
         Chef();
     };
@@ -110,7 +119,20 @@ struct Kitchen
     Chef chef;
 
     Kitchen();
-    
+
+    bool checkTimer ( Chef currentChef )
+    {
+        bool timesUp = !currentChef.isCooking;
+
+        if ( currentChef.minutesCooking > chef.timeAllowed)
+        {
+            timesUp = true;
+            currentChef.isCooking = false;
+            std::cout << "\t Chef - Times Up! \n";
+        } 
+        return timesUp;
+    }
+
     void setMasterChef();
     void startCookingClass (Chef , Recipe);
     void printMasterChefStatus ( Chef );
@@ -119,7 +141,7 @@ struct Kitchen
 Kitchen::Kitchen() : numberChefs(1), numberOfAssistants(3), numberOfStudents(25) {}
 
 Kitchen::Chef::Chef() : 
-    isCooking (true), 
+    isCooking (false), 
     isTeaching (false), 
     isMasterChef (false), //member initialisation sets masterchef status to false
     codeName ('C') 
@@ -139,11 +161,13 @@ void Kitchen::setMasterChef()
 void Kitchen::startCookingClass (Chef aChef, Recipe recipe)
 {
     aChef.isTeaching = true;
+    aChef.isCooking = true;
     recipe.currentStep += 1;
 
     setMasterChef();
+    aChef.setMinutesCooking(0);
 
-    std::cout << "Kitchen::Cooking class started." << std::endl;
+    std::cout << "Kitchen::Cooking class started." << "\n";
 }
 
 void Kitchen::printMasterChefStatus (Chef aChef) 
@@ -158,9 +182,14 @@ int main()
 {
     Kitchen zanzibars;
 
-    std::cout << "Memory used by Kitchen -> " << sizeof(Kitchen) << " bytes" << std::endl;
+    std::cout << "\n \nMemory used by Kitchen -> " << sizeof(Kitchen) << " bytes" << std::endl;
+
     zanzibars.startCookingClass ( zanzibars.chef, zanzibars.chef.currentRecipe);
+    zanzibars.checkTimer( zanzibars.chef );
     zanzibars.printMasterChefStatus( zanzibars.chef );
+    /// 20 minutes later
+    zanzibars.chef.setMinutesCooking(20);
+    zanzibars.checkTimer( zanzibars.chef );
 
     return 0;
 }
@@ -189,49 +218,80 @@ struct KioskLocator
 
     struct KList 
     {
-        int initSize;
+        int listSize;
         char prefix;
         Kiosk k;
 
-        KList getClosestKiosks();
-
+        //default constructor
         KList();
+
+        //alternative constructor
+        KList (int newSize, char newPrefix )
+        {
+            listSize = newSize;
+            prefix = newPrefix;
+        }
     };
 
     Kiosk closestKiosk;
+    KList listOfKiosks;
 
-    void refreshList (KList k, int initSize);
+    KList getClosestKiosks();
+    void refreshList ();
     void getClosestKiosk (KList klist);
 
     void printKioskLocatorName()
     {
         std::cout << "KioskLocator::printKioskLocatorName is -> " << name << std::endl;
-        std::cout << "KioskLocator::Closest Kiosk is -> " << closestKiosk.name << std::endl
-        << std::endl;
+        std::cout << "KioskLocator::Closest Kiosk is -> " << closestKiosk.name << std::endl;
     }
 };
 
-KioskLocator::KList::KList() : initSize (32), prefix ( 'a' ) { }
+KioskLocator::KList::KList() : listSize (32), prefix ( 'a' ) { }
 KioskLocator::Kiosk::Kiosk() : name ( 'Z'), distance ( 20.0f ) { }
 
 //Implementation 2
-void KioskLocator::refreshList (KList klist, int ) 
+void KioskLocator::refreshList() 
 {
     // fetch and dostuff with entries of data from klist 
-    klist.getClosestKiosks();
+    getClosestKiosks();
     //do stuff
 }
 
-KioskLocator::KList KioskLocator::KList::getClosestKiosks() 
+KioskLocator::KList KioskLocator::getClosestKiosks() 
 {
-    // return a KList of closestKiosks
-    return {};
+    // simulated return of a KList of random size
+    // using standard library PRNG in this scope
+    // set initial seed value to system clock https://www.learncpp.com/cpp-tutorial/59-random-number-generation/
+    // seed and randomInt only used in this scope
+    std::srand(static_cast<unsigned int>(std::time(nullptr))); 
+    int randomInt  = static_cast<int>(std::rand()%32);
+
+    KList retrievedGeoData ( 0, 'r'); //use alternative constructor
+
+    if (randomInt > 0)
+    { 
+        retrievedGeoData.listSize = randomInt;
+    } 
+
+    std::cout << "Finding Kiosks-> ";
+    int listSize = retrievedGeoData.listSize;
+    std::string gui = ""; //gui needs to be defined outside of the for loop
+
+    for (int i=0; i<=listSize; ++i)
+    { 
+       gui += (i!=listSize) ? " | " :  "\n";
+    }
+
+    std::cout << gui;
+    return retrievedGeoData;
 }
 
-void KioskLocator::getClosestKiosk (KList klist) 
+void KioskLocator::getClosestKiosk (KList ) 
 {
      // set closest kiosk from a KList
-    refreshList (klist,3);
+     
+    refreshList();
     closestKiosk.name = 'A';
     closestKiosk.distance = 0.0f;
 }
@@ -239,7 +299,8 @@ void KioskLocator::getClosestKiosk (KList klist)
 int main()
 {
     KioskLocator KLM;
-    std::cout << "Memory used by KioskLocator -> " << sizeof(KioskLocator) << " bytes" << std::endl;
+    KLM.getClosestKiosks();
+    std::cout << "Memory used by KioskLocator -> " << sizeof(KioskLocator) << " bytes\n";
     KLM.printKioskLocatorName();
     return 0;
 }
@@ -252,62 +313,93 @@ namespace ADSRTask
 {
 struct ADSR 
 {
-    bool isRunning;
-    char timeScale;
-    double duration;
-    int numberOfStages;
-    
     struct Stage 
     { 
         char stage;
         double stageDur;
+        int id;
 
         Stage();
     };
 
+    bool isRunning;
+    char timeScale;
+    int numberOfStages;
     Stage currentStage;
+    double duration = numberOfStages * currentStage.stageDur;
+    
+    Stage scaleCurrentStage();
 
-    Stage getCurrentStage();
-
-    void printStageDur (Stage envStage)
+    void scaleStageDurationByTimeScale ()
     {
-        if ((numberOfStages) > 0) envStage.stageDur = duration/numberOfStages;
+        //if ((numberOfStages) > 0) envStage.stageDur = duration/numberOfStages;
         //no Type conflict because the first Type in the division takes precedence
 
-        std::cout << "ADSR::curent stage dur is -> " << envStage.stageDur << std::endl
-        << std::endl;
+        auto currentDur = scaleCurrentStage().stageDur;
+        std::cout << "ADSR::scaled stage dur in mode -> " << timeScale <<" is now -> " << currentDur << std::endl;
     }
+
     void printDuration()
     {
-        std::cout << "ADSR::duration is -> " << duration << std::endl;
+        std::cout << "ADSR::total function duration is -> " << duration << std::endl;
     }
 
     ADSR();
+
+    ~ADSR() 
+    {
+       std::cout << "an envelope was destroyed, make it glitch free \n"; 
+    }
+    
 };
 
-ADSR::ADSR() : isRunning ( false ), timeScale ( 'M' ), duration ( 5 ), numberOfStages ( 3 ) { }
-ADSR::Stage::Stage() : stage ('A'), stageDur ( 1 ) {}
+ADSR::ADSR() : isRunning ( false ), timeScale ( 'S' ), numberOfStages ( 4 ) { }
+ADSR::Stage::Stage() : stage ('A'), stageDur ( 0.5 ), id ( 0 ) {}
 
 //Implementation 3
-ADSR::Stage ADSR::getCurrentStage() 
+ADSR::Stage ADSR::scaleCurrentStage() 
 {   
-    if ( currentStage.stageDur > 0 ) 
+    ADSR temporaryADSR;
+
+    if ((currentStage.stageDur > 0) && (currentStage.id <= numberOfStages)) 
     {
-        duration += currentStage.stageDur;
+        temporaryADSR.currentStage.stageDur = currentStage.stageDur;
+
+        double scaleFactor = 1;
+
+        switch (timeScale)
+            {           
+                case 'S':
+                    scaleFactor = 0.25;
+                break;
+                case 'M':
+                    scaleFactor = 1.5;
+                break;
+                case 'L':
+                    scaleFactor = 10;
+                break;
+            }
+        
+        temporaryADSR.currentStage.stageDur *= scaleFactor;
+        // do some wobbly work on the temporary envelope shape...
+        duration += temporaryADSR.currentStage.stageDur;
     } 
     else
     {
         //go to next stage or end
+        currentStage.id++;
+        currentStage.id = currentStage.id%numberOfStages;
+        return currentStage;
     }
-    return {};
+    return temporaryADSR.currentStage;
 }
 
 int main() 
 {
     ADSR env;
     std::cout << "Memory used by ADSR -> " << sizeof(ADSR) << " bytes" << std::endl;
+    env.scaleStageDurationByTimeScale();
     env.printDuration();
-    env.printStageDur( env.currentStage );
     return 0;
 }
 
@@ -317,7 +409,7 @@ int main()
  4)
  */
  namespace FormTask
- {
+{
 struct Form 
 {
     bool isVisible;
@@ -332,12 +424,24 @@ struct Form
             icon = '#';           
         }
 
+        CheckBox(float s) : size (s) {}
+
+        // destructor generates [-Wdeprecated] warning
+        // TODO: learn to resolve this warning later in the course
+        /** 
+        ~CheckBox()
+        {
+            std::cout  << "Check box destructed.";
+        }
+        **/
+
         bool isChecked { false };
         bool isVisible { true };
         float size;
         char icon;
 
-        void animateCheckBox (std::string fieldID, CheckBox c);
+        //lifetime task func...
+        bool animateCheckBox (std::string fieldID, CheckBox c, float animationTime);  
     };
 
     struct TextField 
@@ -356,6 +460,11 @@ struct Form
     bool mouseOver (TextField fullName);
     bool formIsVisible (std::string formID);
     void clearAllCheckBoxes (Form f);
+    void checkABox (CheckBox )
+    {
+        std::cout << "\u2713 \t";
+        this->checkBox.isChecked = true;
+    }
     void print_IDs()
     {
          std::cout << "Form::ids are FieldID ->  " << fullName.fieldID << " FormID ->  " << formID << " CheckBox ID ->  " << fullName.fieldCheckBox.icon << std::endl
@@ -363,6 +472,8 @@ struct Form
     }
 
     Form();
+
+
 };
 
 Form::Form() :
@@ -376,14 +487,14 @@ Form::TextField::TextField() :
                             x ( 80 ), y ( 160 ), w ( 400 ), h ( 90 ),
                             alpha ( 32 ),
                             fieldID ( "FullName" ),
-                            fieldCheckBox ( CheckBox() )
+                            fieldCheckBox (  )
 { }
 
 //Implementation 4
 bool Form::mouseOver (TextField) 
 {
     //return true when mouse is over a certain field
-return {};
+    return {};
 }
 
 bool Form::formIsVisible (std::string ) 
@@ -394,19 +505,41 @@ bool Form::formIsVisible (std::string )
     return {};
 }
 
-void Form::CheckBox::animateCheckBox (std::string , CheckBox)
+bool Form::CheckBox::animateCheckBox (std::string , CheckBox check_box, float anim_time )
 {
     /*
         do funky animation for a UDT CheckBox
         related to a UDT Field of a certain id
+        of course this would be multi threaded or something not with a while loop!
     */
+    float startingSize = check_box.size;
+    float shrinkingSize = startingSize;
+    std::string unicode = "\u2593";
+    while ((check_box.isChecked) && (shrinkingSize > 0.01f)) 
+    {
+       shrinkingSize -= (anim_time/60.0f);
+       if (shrinkingSize/startingSize < 0.75f) unicode = "\u2592";
+       if (shrinkingSize/startingSize < 0.125f) unicode = "\u2591";  
+       
+       if (!check_box.isChecked) 
+        {
+            check_box.size = startingSize;
+            return false;
+        } // user changed their mind during animation
+        
+        std::cout << unicode; //draw the animation
+    }; 
+    return true; // vanished!
 }
 
 int main()
 {
-    Form submit;
-    std::cout << "Memory used by Form -> " << sizeof(Form) << " bytes" << std::endl;
-    submit.print_IDs();
+    Form submitUserData;
+    std::cout << "Memory used by Form -> " << sizeof(Form) << " bytes \n" ;
+    submitUserData.print_IDs();
+    submitUserData.checkABox(submitUserData.checkBox);
+    submitUserData.checkBox.animateCheckBox("name", submitUserData.checkBox, 30.0f);
+    std::cout << "\n";
     return 0;
 }
 }
@@ -429,13 +562,13 @@ struct PresetLibrary
             std::time_t timeSeed;
             std::time (&timeSeed); 
             numberOfChars = {8};
-            name = this-> getRandomChars (timeSeed, numberOfChars);
+            name = "empty";
         }
 
         std::string name;
         unsigned int numberOfChars;
 
-        std::string getRandomChars (long, unsigned int);
+        //std::string getRandomChars (long, unsigned int, std::string);
     };
 
     PresetName presetNameObject;
@@ -443,44 +576,41 @@ struct PresetLibrary
     char bank;
     int presetNumber = { 001 };
     bool hasBeenEdited = { false };
-    float seed;
-    std::string presetName = presetNameObject.name;
+    unsigned seed;
+    std::string noisyKey;
+    //std::string presetName;
 
     bool updatePresets();
     PresetLibrary dumpBank (char bank);
+    std::string generateRandomName();
     std::string getPresetName();
-    
+
+    //default constructor 
     PresetLibrary();
+    //seedable constructor
+    PresetLibrary(unsigned aNewSeed) { seed = aNewSeed; }
 };
 
-PresetLibrary::PresetLibrary() : bank ( 'B' ), seed ( 0.2f ) { }
+PresetLibrary::PresetLibrary() : bank ( 'A' ), seed ( 1 ) { }
 
 //Implementations 5
+std::string PresetLibrary::generateRandomName ()
+{
+    std::string result = "";
+    std::mt19937 randomStream (this->seed); //Standard mersenne_twister_engine seeded with int
+    std::uniform_int_distribution<> nextRandomInRange(65, 90);
+
+    for (unsigned i=0; i<= presetNameObject.numberOfChars; ++i) 
+    {
+        result += static_cast<char>(nextRandomInRange(randomStream)); 
+    }
+    this->presetNameObject.name = result;
+    return result;
+}
+
 std::string PresetLibrary::getPresetName()
 {
     return presetNameObject.name;
-}
-
-std::string PresetLibrary::PresetName::getRandomChars (long seededWith, unsigned int lengthInChars) 
-{
-    /*
-        ... Project 3 task psuedo app, I just lookup a char at random from a string....
-    */
-    std::string noisy = "asiodfunoiusfdyvnzxcvuybzxocv";
-    unsigned noisyLength = unsigned(noisy.length());
-    std::string result = "";
-    std::srand(static_cast<unsigned>(seededWith));
-
-    lengthInChars = (lengthInChars > noisyLength) ? noisyLength : lengthInChars;
-
-    unsigned int index;
-    for ( unsigned int j = 0; j< lengthInChars; ++j)
-    {
-        index = (static_cast<unsigned>(std::rand())) % lengthInChars; 
-        char pick = noisy[ static_cast<size_t>(index) ];
-        result += pick;
-    }
-    return result;
 }
 
 bool PresetLibrary::updatePresets() 
@@ -498,7 +628,8 @@ PresetLibrary PresetLibrary::dumpBank (char)
 
 int main() 
 {
-    PresetLibrary pl; 
+    PresetLibrary pl(137); 
+    pl.generateRandomName();
     std::cout << "Memory used by PresetLibrary -> " << sizeof(PresetLibrary) << " bytes" << std::endl;
     std::cout << "PresetLibrary:: random name is ->  " << pl.getPresetName() << 
     " from seed -> " << pl.seed << std::endl
@@ -512,6 +643,7 @@ int main()
  */
  namespace FunkyBufferPlayerTask
 {
+static double initialGlobalBufferSize = 2048;
 struct FunkyBufferPlayer 
 {
     struct Buffer 
@@ -528,11 +660,13 @@ struct FunkyBufferPlayer
         };
 
         int bufferID;
-        double sizeInSamples = getSizeInSamples (bufferID);
         int loopCounter = { 0 };
+        double bufferSize = setGetSizeInSamples( 2 );
+        double defaultBufferSize = { 2048 }; 
+        bool isEmpty = { true };
 
-        double getSizeInSamples (int );
-        bool clearBuffer (int );
+        double setGetSizeInSamples ( int );
+        bool clearBuffer (Buffer );
         bool copyToSecondaryBuffer (SecondaryBuffer );
 
         Buffer();        
@@ -544,40 +678,51 @@ struct FunkyBufferPlayer
 
     double getDefaultBufferSize()
     {
-        return (this-> defaultBufferSize);
+        return defaultBufferSize;
     }
-
+    
     FunkyBufferPlayer();
 };
-FunkyBufferPlayer::Buffer::Buffer() : bufferID( 2 ) { }
 
 FunkyBufferPlayer::FunkyBufferPlayer() :
-                                        defaultBufferSize ( 2048 ),
+                                        defaultBufferSize ( initialGlobalBufferSize ),
                                         numberOfBuffers ( 4 ),
-                                        mainBuffer ( Buffer ())
+                                        mainBuffer ( Buffer () )
 { }
 
-//Implementation 6
+FunkyBufferPlayer::Buffer::Buffer() : bufferID ( 1 ), defaultBufferSize( initialGlobalBufferSize ) { }
 
-double FunkyBufferPlayer::Buffer::getSizeInSamples (int id) 
+//Implementation 6
+double FunkyBufferPlayer::Buffer::setGetSizeInSamples( int size ) 
 {
-    //return the size of a Buffer instance
+    //set & return the size of a Buffer instance
     double sizeInSamp;
-    switch ( id )
+    switch ( size )
     {
         case 1: sizeInSamp = 512; break;
         case 2: sizeInSamp = 4096; break;
         case 3: sizeInSamp = 8192; break;
-        default: sizeInSamp = 2048; break; // wanted this value to come from parent UDT...don't know how yet
+        default: sizeInSamp = this->defaultBufferSize; break; 
     }
+    this->bufferSize = sizeInSamp;
     return sizeInSamp;
 }
 
-bool FunkyBufferPlayer::Buffer::clearBuffer (int)
+bool FunkyBufferPlayer::Buffer::clearBuffer (Buffer bufferToClear)
 {
-    // empty some buffer really fast
-    // return when done
-    return {};
+     // fill some buffer with some constant really fast
+     double sampsToClear = bufferToClear.bufferSize;
+
+    //if already empty don't do loop and return false.
+    if (bufferToClear.isEmpty) return false;
+
+    for (int s=0; s < sampsToClear; ++s)
+    {
+        //fill the buffer with a constant
+    };
+    
+    // return true when cleared
+    return true;
 }
 
 bool FunkyBufferPlayer::Buffer::copyToSecondaryBuffer (SecondaryBuffer) 
@@ -595,11 +740,19 @@ void FunkyBufferPlayer::Buffer::SecondaryBuffer::reverse (int)
 int main() 
 {
     FunkyBufferPlayer fbp;
-    std::cout << "Memory used by FunkyBufferPlayer -> " << sizeof(FunkyBufferPlayer) << " bytes" << std::endl;
-    std::cout << "FunkyBufferPlayer:: size of buffer "<< fbp.mainBuffer.bufferID  << " is " << fbp.mainBuffer.sizeInSamples  << std::endl << std::endl;
+    std::cout << "Memory used by FunkyBufferPlayer -> " << sizeof(FunkyBufferPlayer) << " bytes \n"
+    << "FunkyBufferPlayer:: size of buffer " << fbp.mainBuffer.bufferID  << " is " << fbp.mainBuffer.bufferSize  << "\n"
+    << "Changing buffer size \u2713 \n" ; 
+    fbp.mainBuffer.setGetSizeInSamples( 3 );
+    std::cout << "FunkyBufferPlayer:: try to clear buffer -> " 
+    << ((fbp.mainBuffer.clearBuffer( fbp.mainBuffer )) ? "\u2713" : "\u2715") << "\n";
+    fbp.mainBuffer.isEmpty = false;
+    std::cout << "FunkyBufferPlayer:: buffer is now full.\n Try clear again -> " 
+    << ((fbp.mainBuffer.clearBuffer( fbp.mainBuffer )) ? "\u2713" : "\u2715") << "\n"
+    << fbp.mainBuffer.bufferSize << " samples cleared."
+    << std::endl;
     return 0;
 }
-
 }
 
 /*
@@ -609,41 +762,52 @@ namespace FaderBankTask
 {
 struct FlyingFaderBank
 {
- 
     int numberOfFaders = {3};
 
     struct Fader
     {
         std::string id;
         bool physics = {true};
-        float friction, accel, velocity = {0.5f};
+        float friction, accel, velocity {0.5f};
+        float px,py;
+        float constrainX {50.0f}, constrainY {400.0f};
 
         void update (std::string id, float friction, float accel, float velocity);
         float getValue (std::string id);
+        float moveRelative(float , float);
+        void updateFaderPosition(float, float);
     };
-//  Initialising structs from list overrides constructor default values
-    Fader fader1 { "kik", false, 0.55f, 0.2f, 0.4f }, 
-          fader2 { "snr", true, 0.1f, 0.33f, 0.5f }, 
-          fader3 { "klp", false, 0.1f, 0.3f, 0.5f }; 
+//  Initialising nested structs inline from list overrides constructor default values
+    Fader fader1 { "kik", false, 0.55f, 0.2f, 0.4f, 100.0f, 300.0f }, 
+          fader2 { "snr", true, 0.1f, 0.33f, 0.5f, 200.0f, 300.0f }, 
+          fader3 { "klp", false, 0.1f, 0.3f, 0.5f, 300.0f, 300.0f }; 
 
     std::string printFaderPhysics();
     std::string printFaderIDs();
-    void updateFaders (int numberOfFaders);
+    void updateFaders (int numberOfFaders);    
 };
 
 //Implementation 7
+float FlyingFaderBank::Fader::moveRelative(float dx, float dy) 
+{
+    if (px > (px+constrainX)) { dx = 0; }
+    if (py > (py+constrainY)) { dy = 0; }
+    updateFaderPosition( dx, dy);
+    return (dx + dy); //returns magnitude
+}
+
 std::string FlyingFaderBank::printFaderPhysics()
 {
     std::string result = "";
-    result += (fader1.physics) ? fader1.id+" true " : fader1.id+" false ";
-    result += (fader2.physics) ? fader2.id+" true " : fader2.id+" false "; 
-    result += (fader3.physics) ? fader3.id+" true " : fader3.id+" false ";   
+    result += (fader1.physics) ? fader1.id+" \u2713 " : fader1.id+" \u2715 ";
+    result += (fader2.physics) ? fader2.id+" \u2713 " : fader2.id+" \u2715 "; 
+    result += (fader3.physics) ? fader3.id+" \u2713 " : fader3.id+" \u2715 ";   
     return result;
 }
 
-void FlyingFaderBank::updateFaders (int)
+void FlyingFaderBank::Fader::updateFaderPosition (float dx, float dy)
 {
-    //get status and values of a number of faders
+    px += dx; py += dy;
 }
 
 void FlyingFaderBank::Fader::update (std::string, float, float, float)
@@ -660,9 +824,14 @@ float FlyingFaderBank::Fader::getValue (std::string)
 int main()
 {
     FlyingFaderBank ffb;
-    std::cout << "Memory used by FlyingFaderBank -> " << sizeof(FlyingFaderBank) << " bytes" << std::endl;
-    std::cout << "Faderbank ID & physics -> " << ffb.printFaderPhysics() << std::endl 
-    << std::endl;
+
+    std::cout << "Memory used by FlyingFaderBank -> " << sizeof(FlyingFaderBank) << " bytes\n"
+    << "Faderbank ID & physics -> " 
+    << ffb.printFaderPhysics() << "\n"
+    << "fader 1 at x:" << ffb.fader1.px << " y:" << ffb.fader1.py << "\n"
+    << "Moving relative....\n";
+    ffb.fader1.moveRelative ( 0.0f, -20.0f );
+    std::cout << "fader 1 at x:" << ffb.fader1.px << " y:" << ffb.fader1.py << "\n";
     return 0;
 }
 }
@@ -674,34 +843,51 @@ namespace ScaleGeneratorTask
 {
 struct ScaleGenerator
 {
-    char scaleName;
-    int octaves;
-    double stepSize;
+    std::string scaleName;
     
     struct Scale 
     {
-        Scale generateScaleForOctaves (int octaves, double stepSize);
+        double octaves;
+        double generatingRatio;
+        std::vector<double> scaleFreqs;
+        double constrain = 4186; // 8 c
+        std::vector<double> generateScaleForOctaves ( double );
     };
 
-    Scale goldenRatio;
+    Scale genScale;
 
-    ScaleGenerator() {scaleName = ( 'a' ); octaves = ( 8 ); stepSize = ( 1.618 );}
+    ScaleGenerator() {scaleName = ( "Golden" ); genScale.octaves = ( 8 ); genScale.generatingRatio = ( 1.618 );}
 
 };
 
 //Implementation 8
-ScaleGenerator::Scale ScaleGenerator::Scale::generateScaleForOctaves (int, double)
+std::vector<double>  ScaleGenerator::Scale::generateScaleForOctaves ( double local_generatingRatio )
 {
     //naive scale generation returns as/into ScaleGenerator::Scale UDT
-    return {};
+    double baseFreq = 32.7; // 1 c
+    double currentFreq = baseFreq;
+    std::vector<double> scaleVector;
+    size_t index = 0;
+    
+    while (currentFreq < constrain)
+    {
+        currentFreq += (currentFreq * (local_generatingRatio/12));
+        scaleVector.push_back(currentFreq);
+       
+        std::cout << currentFreq << ", ";
+        index++;
+    }
+     std::cout << "\n \u2713 \t " << index << " frequencies generated \n";
+    return scaleVector;
 }
 
 int main() 
 {
-    ScaleGenerator scale;
-    std::cout << "Memory used by ScaleGenerator -> " << sizeof(ScaleGenerator) << " bytes" << std::endl;
-    std::cout << "Scale stepsize -> " << scale.stepSize << std::endl
-    << std::endl;
+    ScaleGenerator myScale;
+    std::cout << "Memory used by ScaleGenerator -> " << sizeof(ScaleGenerator) << " bytes \n"
+    << myScale.scaleName << " scale generating ratio -> " << myScale.genScale.generatingRatio << "\n";
+    myScale.genScale.generateScaleForOctaves (myScale.genScale.generatingRatio);
+    
     return 0;
 }
 }
@@ -736,18 +922,23 @@ struct Meter
             int segmentIndex;
             float opacity;
             bool activeStatus;
+            float fadeFactor;
 
             void destroy();
-            void draw (int segmentIndex);
+            void draw (int , float );
                        
-            Segment();                 
+            Segment(); 
+
             ~Segment()
             {
-                segmentIndex = -1; opacity = 0.0f; activeStatus = false;
-                this->destroy();
+                segmentIndex = -1; activeStatus = false;
+                destroy();
             }
 
         };
+
+        Segment m_Segment { } ; // Segment struct initialiser?
+
         void updateSegment (int meterID, Segment s);
     };
 
@@ -757,8 +948,9 @@ struct Meter
 
 Meter::VerticalMeter::Segment::Segment() :
                                         segmentIndex ( 0 ),
-                                        opacity ( 0.5f ),
-                                        activeStatus ( true )
+                                        opacity ( 1.f ),
+                                        activeStatus ( true ),
+                                        fadeFactor ( 0.001f )
 {}
 
 //Implementation 9
@@ -767,26 +959,41 @@ void Meter::VerticalMeter::updateSegment (int, Meter::VerticalMeter::Segment)
     //update segment graphics style
 }
 
-void Meter::VerticalMeter::Segment::draw (int)
-{
-    //draw an instance of a Segment UDT
+void Meter::VerticalMeter::Segment::draw (int , float )
+{   
+    // arguments segmentIndex, opacity
+    // redraw an instance of a Segment UDT
 }
 
 void Meter::VerticalMeter::Segment::destroy()
 {
-    //executes when removing an instance of a Segment UDT from memory 
+     //executes when removing an instance of a Segment UDT from memory 
+    float anim_time = 3;
+    float starts = opacity;
+    float local_opacity = starts;
+    std::string unicode = "\u2593";
+    while (local_opacity > 0.1f) 
+    {
+        local_opacity -= (anim_time/60.0f);
+        if (local_opacity/starts < 0.75f) unicode = "\u2592";
+        if (local_opacity/starts < 0.25f) unicode = "\u2591";          
+        std::cout << unicode; //draw the animation
+    }; 
+    std::cout << "\n" << std::endl;
 }
+
 
 int main() 
 {
     Meter vu1, vu2;
 
-    std::cout << "Memory used by Meter -> " << sizeof(Meter) << " bytes" << std::endl;
-    std::cout << "VuMeter1 x y w h ->  " << vu1.vumeterType1.x << "," << vu1.vumeterType1.y
-    << "," << vu1.vumeterType1.w <<  "," << vu1.vumeterType1.h << std::endl;
-    std::cout << "VuMeter2 x y w h ->  " << vu2.vumeterType2.x << "," << vu1.vumeterType2.y
-    << "," << vu2.vumeterType2.w <<  "," << vu2.vumeterType2.h << std::endl
-    << std::endl;
+    std::cout << "Memory used by Meter -> " << sizeof(Meter) << " bytes\n"
+    << "VuMeter1 x y w h ->  " << vu1.vumeterType1.x << "," << vu1.vumeterType1.y
+    << "," << vu1.vumeterType1.w <<  "," << vu1.vumeterType1.h << "\n"
+    << "VuMeter2 x y w h ->  " << vu2.vumeterType2.x << "," << vu1.vumeterType2.y
+    << "," << vu2.vumeterType2.w <<  "," << vu2.vumeterType2.h 
+    << "\nDestructor fades out segments when main() ends why are there four? -> \n"; // why are there four calls to the ~Segment destuctor?
+    std::cout << "\n";
     return 0;
 }
 }
@@ -837,12 +1044,15 @@ struct StepSequencer
     unsigned int id;
     char pitchClass { stepData.pitchClass }; 
     int currentStage { stepData.currentStage };
+    bool isBackwards;
+
+    int stepForward ();
 
     StepSequencer();
 };
 
 StepSequencer::StepData::StepData() :
-                                currentStage ( 1 ),
+                                currentStage ( 0 ),
                                 gateStatus ( true ),
                                 duration ( 1.0 )                            
 { }
@@ -851,11 +1061,32 @@ StepSequencer::StepSequencer() :
                                 isPlaying ( false ),
                                 numberOfSteps ( 8 ),
                                 tempo ( 120 ),
-                                id ( 1 )
+                                id ( 1 ),   
+                                isBackwards ( false )
 { }
 
 
 //Implementation 10
+
+int StepSequencer::stepForward () 
+{
+    int localStepSize;
+    localStepSize = (isBackwards) ? -1 : 1;
+    int local_currentStage = currentStage;
+
+    if (isPlaying) 
+    {       
+        local_currentStage += localStepSize; 
+        currentStage = abs(local_currentStage%numberOfSteps);
+    }
+    else
+    {
+        currentStage = 0;
+    }
+return currentStage;
+}
+
+
 char StepSequencer::StepData::PitchClass::pitchFromFreq (double)
 {
     //here we would actually calculate the pitch class with precision and grace
@@ -884,8 +1115,26 @@ int main()
 {
     StepSequencer s1;
 
-    std::cout << "Memory used by StepSequencer -> " << sizeof(StepSequencer) << " bytes" << std::endl;
-    std::cout << "Sequencer:: Pitch Class -> " << s1.pitchClass << std::endl;
+    std::cout << "Memory used by StepSequencer -> " << sizeof(StepSequencer) << " bytes \n"
+    << "Sequencer:: Pitch Class -> " << s1.pitchClass << "\n"
+    << "Starting sequencer -> \n";
+    s1.isPlaying = true;
+    std::srand(static_cast<unsigned int>(std::time(nullptr))); //initialise biased PRNG
+    int randomInt = 0;
+    std::string playSign = "";
+
+    for (int i=48; i>0; --i) 
+    {
+        playSign = " \u21E8 ";
+        randomInt = static_cast<int>(std::rand()%10);
+        // 50% chance of flipping direction...
+        if (randomInt < 5) 
+        {
+            s1.isBackwards = !s1.isBackwards;
+            playSign = " \u21E6 ";
+        }
+        std::cout << playSign << s1.stepForward();
+    }
     return 0;
 }
 }
@@ -893,17 +1142,28 @@ int main()
 #include <iostream>
 int main()
 {
-	Example::main();
+    std::string separator = "\n------------------------------\n";
+	//Example::main();
+    std::cout << separator;
     KitchenExample::main();
+    std::cout << separator;
     KioskLocatorTask::main();
+    std::cout << separator;
     ADSRTask::main();
+    std::cout << separator;
     FormTask::main();
+    std::cout << separator;
     PresetLibraryTask::main();
+    std::cout << separator;
     FunkyBufferPlayerTask::main();
+    std::cout << separator;
     FaderBankTask::main();
+    std::cout << separator;
     ScaleGeneratorTask::main();
+    std::cout << separator;
     MetersTask::main();
+    std::cout << separator;
     SequencerTask::main();
-
+    std::cout << separator;
     std::cout << "good to go!" << std::endl;
 }
